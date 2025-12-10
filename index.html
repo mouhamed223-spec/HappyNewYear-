@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy New Year 2026 ! 🎉 </title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* --- Définition des Couleurs --- */
+        :root {
+            --color-primary: #ffd700; /* Doré */
+            --color-secondary: #e74c3c; /* Rouge */
+            --color-background-dark: #0d1e3d; /* Bleu Nuit */
+            --glow-color: #ffcc00; /* Couleur pour la brillance du texte */
+            --audio-bg: rgba(30, 50, 90, 0.95);
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #ffffff;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            /* REMPLACER PAR VOTRE FICHIER IMAGE/GIF */
+            background-image: url('ARTIFICES.gif');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-color: var(--color-background-dark);
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background-color: transparent;
+            padding: 0;
+            box-shadow: none;
+            max-width: 500px;
+            width: 100%;
+            transition: all 0.5s ease-in-out;
+            border: none;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        /* --- Styles du Lecteur Audio --- */
+        #audio-player-container {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1000;
+            max-width: 250px;
+            background-color: var(--audio-bg);
+            border-radius: 12px;
+            padding: 15px;
+            border: 2px solid var(--color-primary);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5), 0 0 15px rgba(255, 215, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        #audio-player-container .track-info {
+            width: 100%;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            color: #9b59b6;
+            text-shadow: 0 0 3px #fff;
+            font-weight: bold;
+        }
+
+        #audio-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-grow: 1;
+        }
+
+        .audio-btn {
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.5em;
+            cursor: pointer;
+            padding: 5px;
+            transition: color 0.3s, transform 0.1s;
+            text-shadow: 0 0 5px var(--glow-color);
+        }
+
+        .audio-btn:hover {
+            color: var(--color-primary);
+            transform: scale(1.1);
+        }
+
+        #volume-slider {
+            width: 80px;
+            height: 8px;
+            cursor: pointer;
+            -webkit-appearance: none;
+            background: linear-gradient(90deg, #e74c3c, #f39c12, #2ecc71, #3498db);
+            border-radius: 4px;
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+        }
+
+        /* --- Styles de la Modale (Compact) --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: var(--color-background-dark);
+            margin: 10% auto;
+            padding: 20px;
+            border: 3px solid var(--color-primary);
+            border-radius: 20px;
+            width: 80%;
+            max-width: 350px;
+            position: relative;
+            box-shadow: 0 0 20px var(--glow-color);
+            text-align: left;
+        }
+
+        .modal-content h3 {
+            color: var(--color-secondary);
+            text-align: center;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 5px #fff;
+        }
+
+        .close-btn {
+            color: var(--color-primary);
+            float: right;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            transition: color 0.3s;
+        }
+
+        .close-btn:hover {
+            color: var(--color-secondary);
+        }
+
+        /* --- Formulaire & Espacement --- */
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #ffffff;
+            text-shadow: 0 0 3px #fff, 0 0 5px #fff;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--color-primary);
+            border-radius: 8px;
+            box-sizing: border-box;
+            background-color: rgba(255, 255, 255, 0.95);
+            color: #333333;
+        }
+
+        /* --- Autres Styles (Comptes à Rebours, Titres, Voeux) --- */
+
+        #countdown {
+            background-color: rgba(13, 30, 61, 0.9);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin-bottom: 35px;
+            font-size: 1.2em;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        #fixed-title {
+            color: var(--color-primary);
+            font-size: 3em;
+            font-family: 'Dancing Script', cursive;
+            margin-bottom: 20px;
+            text-shadow:
+                0 0 7px var(--glow-color),
+                0 0 15px var(--glow-color),
+                0 0 25px rgba(255, 255, 0, 0.8),
+                2px 2px 5px rgba(0, 0, 0, 0.9);
+        }
+
+        /* --- Augmentation de la Police Multilingue --- */
+        #scrolling-container {
+            height: 1.5em;
+            overflow: hidden;
+            margin-bottom: 35px;
+            font-size: 2em;
+            font-weight: 700;
+        }
+
+        /* --- Voeux Section --- */
+        #greeting-section {
+            display: none;
+            padding: 30px;
+            background-color: rgba(17, 34, 60, 0.9);
+            border-radius: 15px;
+            border: 5px solid var(--color-primary);
+            box-shadow: 0 0 15px var(--color-secondary), 0 0 25px var(--color-primary);
+            animation: border-pulse 4s infinite alternate;
+        }
+
+        #greeting-section h2 {
+            font-size: 3.5em;
+            margin-bottom: 15px;
+            font-family: 'Dancing Script', cursive;
+            /* Animation RGB RAPIDE (2s) */
+            animation: pulse 1.5s infinite, color-cycle 2s linear infinite; 
+        }
+
+        #greeting-message {
+            font-size: 1.6em;
+            line-height: 1.6;
+            margin-top: 30px;
+            color: #ffffff;
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            text-shadow: 0 0 4px #000, 0 0 8px #000;
+        }
+
+        /* --- Boutons de Formulaire (Recevoir mon Vœu) --- */
+        .button-group,
+        .share-buttons-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            /* Le bouton submit est forcé à droite */
+            flex-direction: row-reverse; 
+        }
+
+        button[type="submit"],
+        #about-btn,
+        .share-btn {
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-size: 1.05em;
+            cursor: pointer;
+            color: white;
+            flex-grow: 1;
+            box-shadow:
+                inset 0 -4px 0 rgba(0, 0, 0, 0.3),
+                0 4px 8px rgba(0, 0, 0, 0.4);
+            transition: transform 0.15s, box-shadow 0.15s;
+            --hover-color: var(--color-primary);
+        }
+
+        button[type="submit"] {
+            background-color: #f39c12;
+        }
+
+        #about-btn {
+            background-color: #c0392b;
+        }
+
+        .whatsapp-btn {
+            background-color: #27ae60;
+        }
+
+        .facebook-btn {
+            background-color: #2980b9;
+        }
+
+        .link-btn {
+            background-color: #8e44ad;
+        }
+
+        /* --- Bouton Recommencer (Coin Inférieur Droit) --- */
+        #try-again-btn {
+            position: fixed;
+            /* ANCRAGE DÉFINITIF À DROITE */
+            right: 20px; 
+            bottom: 20px;
+            transform: translateX(0); 
+            z-index: 500;
+            display: none;
+            /* Style bouton */
+            background-color: var(--color-background-dark);
+            color: var(--color-primary);
+            padding: 15px 25px;
+            border-radius: 12px;
+            /* Bordure dorée demandée */
+            border: 3px solid var(--color-primary);
+            /* Effet glow dorée */
+            box-shadow: 0 0 10px var(--color-primary), 0 0 20px rgba(255, 215, 0, 0.7);
+            font-size: 1.1em;
+            /* Le texte est horizontal */
+            writing-mode: horizontal-tb;
+            text-orientation: unset;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        #try-again-btn:hover {
+            background-color: rgba(255, 215, 0, 0.2);
+            transform: scale(1.05); 
+        }
+
+        /* Animation de changement de couleur (RGB) pour le titre */
+        @keyframes color-cycle {
+            0% { color: #f39c12; text-shadow: 0 0 5px #f39c12; }    
+            25% { color: #e74c3c; text-shadow: 0 0 5px #e74c3c; }   
+            50% { color: #3498db; text-shadow: 0 0 5px #3498db; }   
+            75% { color: #2ecc71; text-shadow: 0 0 5px #2ecc71; }   
+            100% { color: #f39c12; text-shadow: 0 0 5px #f39c12; }  
+        }
+
+        /* Animation Pulse pour les bordures de vœux */
+        @keyframes border-pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 15px var(--color-secondary);
+            }
+
+            100% {
+                transform: scale(1.01);
+                box-shadow: 0 0 30px var(--color-primary), 0 0 50px var(--color-secondary);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="audio-player-container">
+        <p class="track-info"><span id="track-name">Piste 1 : Ma Chanson du Nouvel An 🎶</span></p>
+        <div id="audio-controls">
+            <button id="prev-btn" class="audio-btn"><i class="fas fa-backward"></i></button>
+            <button id="play-pause-btn" class="audio-btn"><i class="fas fa-pause"></i></button>
+            <button id="next-btn" class="audio-btn"><i class="fas fa-forward"></i></button>
+            <i class="fas fa-volume-up" style="font-size: 1.1em; color: var(--glow-color); margin-left: 10px;"></i>
+            <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.5">
+        </div>
+    </div>
+
+    <div class="container">
+
+        <div id="welcome-section">
+            <h1 id="fixed-title">🎉2026 ARRIVE!🎉</h1>
+
+            <div id="scrolling-container">
+                <span id="multilingual-title"></span>
+            </div>
+
+            <div id="countdown">
+                <span>Compte à rebours en cours...</span>
+            </div>
+
+            <form id="greeting-form">
+                <div class="form-group">
+                    <label for="firstName">Prénom :</label>
+                    <input type="text" id="firstName" name="firstName" required>
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Nom :</label>
+                    <input type="text" id="lastName" name="lastName">
+                </div>
+
+                <div class="button-group">
+                    <button type="submit">Recevoir mon Vœu 🥳</button>
+                    <button type="button" id="about-btn">À Propos</button>
+                </div>
+            </form>
+        </div>
+
+        <div id="greeting-section">
+            <h2 id="greeting-title"></h2>
+            <p id="greeting-message"></p>
+
+            <div id="share-buttons" class="share-buttons-container">
+                <a href="#" target="_blank" id="whatsapp-share" class="share-btn whatsapp-btn">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
+                </a>
+                <a href="#" target="_blank" id="facebook-share" class="share-btn facebook-btn">
+                    <i class="fab fa-facebook-f"></i> Facebook
+                </a>
+                <a href="#" id="link-share" class="share-btn link-btn">
+                    <i class="fas fa-copy"></i> Partager le lien
+                </a>
+            </div>
+            <p class="copy-message" id="copy-success-message"
+                style="display: none; color: #2ecc71; margin-top: 10px; font-weight: bold;">Lien copié ! Envoyez-le à
+                vos amis.</p>
+        </div>
+    </div>
+
+    <button type="button" id="try-again-btn">
+        Créer mon propre vœu personnalisé !
+    </button>
+
+    <div id="about-modal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h3>À Propos de ce Projet</h3>
+
+            <p style="text-align: center; font-style: italic; margin-bottom: 20px; font-size: 1.1em; color: #ecf0f1;">
+                "Ce projet est né de l'éclat des vœux et du battement de cœur de l'attente. 
+                Il est une étincelle numérique pour transcender la distance, portant l'écho 
+                de l'espoir et la promesse que chaque nouvelle année arrive, comme un cadeau, 
+                avec douceur et éclat."
+            </p>
+            <hr style="border-color: rgba(255, 255, 255, 0.1);">
+
+            <p>
+                <strong><span style="color: #3498db;">Conception & Développement:</span></strong> SEYDINA
+            </p>
+            <p>
+                <strong><span style="color: #2ecc71;">Propulsé par :</span></strong> Google Gemini 🤖
+            </p>
+
+            <p style="color: var(--color-primary); font-size: 0.9em; margin-top: 20px; text-align: center;">
+                © 2026 SEYDIAPPS. Tous droits réservés.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // 0. DÉCLARATION DES CONSTANTES ET ÉLÉMENTS DOM
+        const audioPlayerContainer = document.getElementById('audio-player-container');
+        const playPauseBtn = document.getElementById('play-pause-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const volumeSlider = document.getElementById('volume-slider');
+        const trackNameElement = document.getElementById('track-name');
+        const greetingForm = document.getElementById('greeting-form');
+        const firstNameInput = document.getElementById('firstName');
+        const lastNameInput = document.getElementById('lastName');
+        const tryAgainBtn = document.getElementById('try-again-btn');
+        const countdownElement = document.getElementById('countdown');
+        const multilingualTitleElement = document.getElementById('multilingual-title');
+
+        const aboutBtn = document.getElementById('about-btn');
+        const modalOverlay = document.getElementById('about-modal');
+        const closeBtn = document.querySelector('.close-btn');
+
+        const audio = new Audio();
+
+        // 1. DÉFINITION DES PISTES AUDIO
+        const tracks = [
+            {
+                name: "Ma Chanson du Nouvel An 🎶",
+                url: "ENTREZ_L_URL_OU_NOM_DE_VOTRE_FICHIER_MUSICAL_ICI"
+            },
+            // { name: "Piste 2 : Musique de Fête", url: "votre_deuxieme_chanson.mp3" }
+        ];
+
+        let currentTrackIndex = 0;
+        audio.loop = true;
+
+        // 2. FONCTIONS DE GESTION AUDIO
+        function loadTrack(index) {
+            currentTrackIndex = index;
+            if (tracks[currentTrackIndex].url && tracks[currentTrackIndex].url !== "ENTREZ_L_URL_OU_NOM_DE_VOTRE_FICHIER_MUSICAL_ICI") {
+                 audio.src = tracks[currentTrackIndex].url;
+            } else {
+                 audio.src = ''; 
+            }
+            trackNameElement.textContent = tracks[currentTrackIndex].name;
+            audio.load();
+        }
+
+        function playTrack() {
+            audioPlayerContainer.style.display = 'flex';
+            audio.play().then(() => {
+                playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            }).catch(error => {
+                playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            });
+        }
+
+        function playPauseTrack() {
+            if (audio.paused) {
+                audio.play().catch(error => { console.error("Erreur de lecture :", error); });
+                playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            } else {
+                audio.pause();
+                playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            }
+        }
+
+        function nextTrack() {
+            currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
+            loadTrack(currentTrackIndex);
+            playTrack();
+        }
+
+        function prevTrack() {
+            currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
+            loadTrack(currentTrackIndex);
+            playTrack();
+        }
+
+        // 3. ÉCOUTEURS D'ÉVÉNEMENTS AUDIO
+        playPauseBtn.addEventListener('click', playPauseTrack);
+        nextBtn.addEventListener('click', nextTrack);
+        prevBtn.addEventListener('click', prevTrack);
+        volumeSlider.addEventListener('input', () => {
+            audio.volume = volumeSlider.value;
+        });
+
+        loadTrack(0);
+        audio.volume = volumeSlider.value;
+
+
+        // 4. GESTION DE LA MODALE "À PROPOS"
+        aboutBtn.addEventListener('click', () => {
+            modalOverlay.style.display = 'block';
+        });
+
+        closeBtn.addEventListener('click', () => {
+            modalOverlay.style.display = 'none';
+        });
+
+        // Fermer la modale si l'utilisateur clique en dehors
+        window.addEventListener('click', (event) => {
+            if (event.target === modalOverlay) {
+                modalOverlay.style.display = 'none';
+            }
+        });
+
+        // 5. GESTION DE LA SOUMISSION DU FORMULAIRE
+        greetingForm.addEventListener('submit', function (event) {
+            event.preventDefault(); 
+            const firstName = firstNameInput.value;
+            const lastName = lastNameInput.value;
+
+            if (firstName) {
+                displayGreeting(firstName, lastName);
+            } else {
+                alert("Veuillez entrer votre Prénom pour recevoir votre Vœu !");
+            }
+        });
+
+
+        // 6. FONCTIONS UTILITAIRES ET COMPTE À REBOURS
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            const results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+
+        function launchConfetti() {
+            confetti({
+                particleCount: 150,
+                spread: 120,
+                origin: { y: 0.6 },
+                colors: ['#ffd700', '#e74c3c', '#ffffff', '#3498db', '#2ecc71', '#e84393', '#9b59b6']
+            });
+        }
+
+        // Démarrage du titre multilingue
+        const multilingualTitles = [
+            "Happy New Year!",
+            "¡Feliz Año Nuevo!",
+            "Bonne Année !",
+            "Frohes Neues Jahr!",
+            "あけましておめでとうございます!",
+            "С Новым Годом!",
+            "Mutlu Yıllar!",
+            "Felice Anno Nuovo!",
+            " Atum mbektek jàmm!" 
+        ];
+        let titleIndex = 0;
+
+        function updateMultilingualTitle() {
+            multilingualTitleElement.style.opacity = 0; 
+
+            setTimeout(() => {
+                multilingualTitleElement.textContent = multilingualTitles[titleIndex];
+                multilingualTitleElement.style.opacity = 1; 
+                titleIndex = (titleIndex + 1) % multilingualTitles.length;
+            }, 300); 
+
+        }
+
+        updateMultilingualTitle(); 
+        window.titleInterval = setInterval(updateMultilingualTitle, 3000); 
+
+
+        // Fonction de compte à rebours COMPLÈTE
+        // Note: L'heure est définie pour Kébémer (GMT+0) si le code est exécuté localement ou sur un serveur sans fuseau horaire explicite.
+        const newYearDate = new Date('January 1, 2026 00:00:00').getTime();
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = newYearDate - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            if (distance > 0) {
+                countdownElement.innerHTML = `
+                    <span>Il reste :</span>
+                    <span><span id="days" class="time-value">${String(days).padStart(2, '0')}</span> Jours</span>
+                    <span><span id="hours" class="time-value">${String(hours).padStart(2, '0')}</span> Heures</span>
+                    <span><span id="minutes" class="time-value">${String(minutes).padStart(2, '0')}</span> Min.</span>
+                    <span><span id="seconds" class="time-value">${String(seconds).padStart(2, '0')}</span> Sec.</span>
+                `;
+            } else {
+                // Année atteinte
+                countdownElement.innerHTML = "✨ **BONNE ANNÉE 2026 !** ✨";
+                clearInterval(window.countdownInterval); 
+            }
+        }
+
+        updateCountdown();
+        window.countdownInterval = setInterval(updateCountdown, 1000);
+
+
+        // 7. GESTION DE L'AFFICHAGE DU VŒU
+        function displayGreeting(firstName, lastName) {
+            const fullName = `${firstName} ${lastName || ''}`.trim();
+            const hour = new Date().getHours();
+            let salutation = (hour < 12) ? "Bonjour" : (hour < 18) ? "Bon après-midi" : "Bonsoir";
+
+            const styledFullName = `<span style="color: #e84393; font-weight: bold; text-shadow: 0 0 5px #e84393, 0 0 10px #e84393;">${fullName}</span>`;
+
+            const voeuxMessage = `
+                ${salutation} ${styledFullName},
+                <br><br>
+                <span style="color: #ffffff;">Que cette année 2026 soit remplie de joie, de succès et de merveilleuses surprises pour vous et vos proches.
+                Que tous vos projets se réalisent et que chaque jour vous apporte du bonheur et de la prospérité.</span>
+                <br><br>
+                Avec tous mes meilleurs vœux,
+                <br>
+                L'équipe Happy New Year 2026 !
+            `;
+
+            document.getElementById('greeting-title').textContent = `Joyeux Nouvel An 2026 !`;
+            document.getElementById('greeting-message').innerHTML = voeuxMessage;
+
+            document.getElementById('welcome-section').style.display = 'none';
+            document.getElementById('greeting-section').style.display = 'block';
+            tryAgainBtn.style.display = 'block';
+
+            setupShareButtons(firstName, lastName);
+
+            playTrack();
+            launchConfetti();
+            clearInterval(window.confettiInterval);
+            window.confettiInterval = setInterval(launchConfetti, 5000);
+            clearInterval(window.titleInterval);
+        }
+
+        // 8. CONFIGURATION DU PARTAGE
+        function setupShareButtons(firstName, lastName) {
+            const shareName = encodeURIComponent(firstName);
+            const shareLastName = encodeURIComponent(lastName);
+            const shareURL = `${window.location.protocol}//${window.location.host}${window.location.pathname}?p=${shareName}&n=${shareLastName}`;
+            const message = encodeURIComponent(`Joyeux Nouvel An ! 2026  : ${shareURL}`);
+
+            // WhatsApp
+            const whatsappLink = document.getElementById('whatsapp-share');
+            whatsappLink.href = `https://wa.me/?text=${message}`;
+
+            // Facebook
+            const facebookLink = document.getElementById('facebook-share');
+            facebookLink.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareURL)}&quote=${encodeURIComponent(`Joyeux Nouvel An 2026 !`)}`;
+
+            // Lien
+            const linkShareBtn = document.getElementById('link-share');
+            const copySuccessMessage = document.getElementById('copy-success-message');
+
+            linkShareBtn.onclick = function (e) {
+                e.preventDefault();
+                navigator.clipboard.writeText(shareURL).then(() => {
+                    copySuccessMessage.style.display = 'block';
+                    setTimeout(() => copySuccessMessage.style.display = 'none', 3000);
+                }).catch(err => {
+                    console.error('Erreur de copie du lien:', err);
+                    alert('Erreur: Impossible de copier le lien. Veuillez le copier manuellement: ' + shareURL);
+                });
+            };
+        }
+
+        // 9. GESTION DU BOUTON "RECOMMENCER" (TRY AGAIN)
+        tryAgainBtn.addEventListener('click', () => {
+            // Revenir à la section de bienvenue
+            document.getElementById('welcome-section').style.display = 'block';
+            document.getElementById('greeting-section').style.display = 'none';
+            tryAgainBtn.style.display = 'none';
+            // Réinitialiser le formulaire
+            greetingForm.reset();
+            // Redémarrer le titre multilingue et le compte à rebours
+            clearInterval(window.confettiInterval);
+            clearInterval(window.titleInterval);
+            window.titleInterval = setInterval(updateMultilingualTitle, 3000);
+            clearInterval(window.countdownInterval);
+            updateCountdown();
+            window.countdownInterval = setInterval(updateCountdown, 1000);
+            // Arrêter la musique
+            audio.pause();
+            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            audioPlayerContainer.style.display = 'none';
+        });
+
+        // 10. GESTION AU CHARGEMENT (Partage par URL)
+        window.onload = function () {
+            const p = getUrlParameter('p');
+            const n = getUrlParameter('n');
+
+            if (p) {
+                // Si l'URL contient un nom (partage)
+                firstNameInput.value = p;
+                lastNameInput.value = n;
+                displayGreeting(p, n);
+            }
+        };
+
+    </script>
+</body>
+</html>
